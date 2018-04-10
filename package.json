@@ -1,0 +1,23 @@
+{
+  "name": "metra-test",
+  "version": "0.1.0",
+  "description": "Test Metra Rail APIs with JS.",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "async": "^2.4.1",
+    "bunyan": "^1.8.10",
+    "geolib": "^2.0.23",
+    "latlon-geohash": "^1.1.0",
+    "lodash": "^4.17.4",
+    "minimist": "^1.2.0",
+    "request": "^2.85.0",
+    "restify-clients": "^1.5.0",
+    "ttys": "0.0.3",
+    "uuid": "^3.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  }
+}

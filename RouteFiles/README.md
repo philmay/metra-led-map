@@ -1,0 +1,2 @@
+# Data Files
+The files in this directory represent the lines that I have incorporated into the design of the Metra LED project. The `LineData-<line-name>.csv` files are output from the spreadsheet in the `RawData` directory.

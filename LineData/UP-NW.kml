@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>UP-NW</name>
+    <description>Union Pacific NW Line simplified KML</description>
+    <Style id="line-7CB342-8750-nodesc-normal">
+      <LineStyle>
+        <color>ff42b37c</color>
+        <width>8.75</width>
+      </LineStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="line-7CB342-8750-nodesc-highlight">
+      <LineStyle>
+        <color>ff42b37c</color>
+        <width>13.125</width>
+      </LineStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="line-7CB342-8750-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#line-7CB342-8750-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#line-7CB342-8750-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="line-FFEA00-9719-nodesc-normal">
+      <LineStyle>
+        <color>ff00eaff</color>
+        <width>9.719</width>
+      </LineStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="line-FFEA00-9719-nodesc-highlight">
+      <LineStyle>
+        <color>ff00eaff</color>
+        <width>14.5785</width>
+      </LineStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="line-FFEA00-9719-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#line-FFEA00-9719-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#line-FFEA00-9719-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Folder>
+      <name>Metra Union Pacific Northwest Line</name>
+      <Placemark>
+        <name>Harvard</name>
+        <styleUrl>#line-FFEA00-9719-nodesc</styleUrl>
+        <LineString>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -87.640591,41.882648,0
+            -87.641153,41.888943,0
+            -87.659185,41.900699,0
+            -87.668794,41.917548,0
+            -87.883235,42.039224,0
+            -88.096447,42.1343221,0
+            -88.2602978,42.2189834,0
+            -88.291352,42.230624,0
+            -88.439366,42.30893,0
+            -88.450843,42.320314,0
+            -88.4940147,42.3500445,0
+            -88.5528088,42.4012771,0
+            -88.619258,42.420989,0
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>McHenry Spur</name>
+        <styleUrl>#line-7CB342-8750-nodesc</styleUrl>
+        <LineString>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -88.289931,42.230006,0
+            -88.316241,42.243754,0
+            -88.300015,42.259422,0
+            -88.296338,42.312494,0
+            -88.275981,42.342519,0
+          </coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>
