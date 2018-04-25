@@ -393,7 +393,6 @@ function protoDisplayUPNWandUPW(leds) {
 		}
 		postBodyArray.push({position:newPosition, color:newColor});
 	});
-console.log(JSON.stringify(postBodyArray));
 	// POST new array to LED server
 	request.post(
 		{
