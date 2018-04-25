@@ -329,36 +329,71 @@ function textDisplayUPW(leds) {
 	console.log(mainLedArray.join(''));
 }
 
-function ledDisplayUPNW(leds) {
+function protoDisplayUPNWandUPW(leds) {
 	var ledLightArray = [];
 	var palatine = Math.floor(PALATINE_LED/2);
+	var elburn = Math.floor(((119 - ELBURN_LED) + 120)/2)
 	var ogilve = 0;
-	// Add Ogilve and Palatine as blue LEDs
-	var postBodyArray = [{position:0, color:"blue"},{position:palatine, color:"blue"}];
-	leds.forEach((ledObject) => {
+	// Add Ogilve (twice) and Palatine as blue LEDs
+	var postBodyArray = [{position:0, color:"blue"},{position:palatine, color:"blue"},{position:119, color:"blue"}];
+	leds['UP-NW'].forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
-			if (ledObject.spur == 0) {
+			// FIXME: The UP-NW prototype LED strip is 60 LEDs long. This means
+			//        that LED positions >= 120 will not be displayed once the
+			//        2:1 poistion to LED mapping is done below. LEDs for positions
+			//        120 and higher will be uesd for the UP-W line.
+			if (ledObject.spur == 0 && ledObject.spurLed < 120) {
 				ledLightArray.push(ledObject.spurLed);
 			}
+			// TODO: This needs to be added back before any full display, but
+			//       the offset is unknown (based on how UP-W fits into the whole
+			//       continuous string of LEDs)
 			// If on the McHenry spur, add 220 in order to only need a single
 			// continuous strand.
-			if (ledObject.spur == 1) {
-				ledLightArray.push(ledObject.spurLed + 220);
+			// if (ledObject.spur == 1) {
+			// 	ledLightArray.push(ledObject.spurLed + 220);
+			// }
+		}
+	});
+	// FIXME: Since the UP-NW prototype LED strip is 60 LEDs long, and the UP-W
+	//        LEDs will be attached directly to the end of the UP-NW strip, all
+	//        positions >= 120 (divide by two for prototype LED positions) are
+	//        UP-W positions. So, the UP-W is offset by 120. In addition, the
+	//        positions are "reversed", since the LED strip in our physical layout
+	//        wraps around in a U-shape. In other words, the farther-out trains
+	//        on the UP-W line are in lower numbered positions, which is the
+	//        opposite to what the UP-NW situation is. For this reason, all
+	//        positions will be given a negative value and offset from 119.
+	leds['UP-W'].forEach((ledObject) => {
+		if (ledObject != null && ledObject != undefined) {
+			if (ledObject.spurLed < 120) {
+				ledLightArray.push((119 - ledObject.spurLed) + 120);
 			}
 		}
 	});
-	// Squeeze the array in half for the protytype strip
+	// Squeeze the array in half for the protytype strips
 	var newPosition, newColor;
 	ledLightArray.forEach((ledIndex) => {
 		newPosition = Math.floor(ledIndex/2);
+		// ogilve and palatine get lit cyan if a train is present
 		if (newPosition == 0 || newPosition == palatine) {
 			newColor = "cyan";
 		}
+		// ogilve for the UP-W line gets lit purple
+		else if (newPosition == 119) {
+			newColor = "purple"
+		}
+		// all trains at LED position 60 and above are UP-W, and "pink"
+		else if (newPosition > 59) {
+			newColor = "magenta"
+		}
+		// all other trains are UP-NW green
 		else {
 			newColor = "green";
 		}
 		postBodyArray.push({position:newPosition, color:newColor});
 	});
+console.log(JSON.stringify(postBodyArray));
 	// POST new array to LED server
 	request.post(
 		{
@@ -391,9 +426,8 @@ function processFetchedData(sortedPositions, done) {
 	});
 	log.debug("%s", JSON.stringify(ledsToLight, null, 4));
 	textDisplayUPNW(ledsToLight['UP-NW']);
-	ledDisplayUPNW(ledsToLight['UP-NW']);
 	textDisplayUPW(ledsToLight['UP-W']);
-	ledDisplayUPW(ledsToLight['UP-W']);
+	protoDisplayUPNWandUPW(ledsToLight);
 	done(null);
 }
 
