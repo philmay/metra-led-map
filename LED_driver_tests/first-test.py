@@ -8,7 +8,7 @@ bibliopixel.log.setLogLevel(bibliopixel.log.DEBUG)
 from bibliopixel.drivers.serial import *
 from bibliopixel.drivers.driver_base import *
 # set number of pixels & LED type here
-length = 60
+length = 90
 driver = Serial(num = length, ledtype = LEDTYPE.WS2812B, c_order = ChannelOrder.GRB)
 
 # load the LEDStrip class
@@ -29,16 +29,14 @@ try:
     led.set_brightness(32)
     while True:
         for i in range(0,length-1):
-            led.set(i, colors.Blue)
-            led.set(i, colors.Blue)
-            led.set(i, colors.Blue)
+            led.set(i, colors.White)
             led.update()
             time.sleep(0.1)
             led.setOff(i)
         for j in range(0,length-1):
-            led.set(length-1-j, colors.Blue)
+            led.set(length-1-j, colors.White)
             led.update()
-            time.sleep(0.1)
+            time.sleep(0.05)
             led.setOff(length-1-j)
 
 except KeyboardInterrupt:

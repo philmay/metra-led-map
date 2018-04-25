@@ -86,7 +86,7 @@ let linesNamesArray = sharedConstants.linesNamesArray;
 //		}
 //
 // This structure is an object containing an array for each line, accessed via
-// the line name, which is stored in the linesNameArray array. Each of these
+// the line name, which is stored in the linesNamesArray array. Each of these
 // arrays is made up of an array for each spur that makes up the line. In most cases,
 // there is only a single "main" spur for any given line, and in these cases,
 // the line array will contain only a single spur array.
@@ -237,11 +237,10 @@ const SPUR_JUNCTION_POSITION = 37;
 function textDisplayUPNW(leds) {
 	var mainLedArray = [];
 	var spurLedArray = [];
-	var UPNW = leds["UP-NW"];
 	var mainLedPositions = [];
 	var spurLedPositions = [];
 // console.log("*******\n" + JSON.stringify(UPNW, null, 2));
-	UPNW.forEach((ledObject) => {
+	leds.forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			if (ledObject.spur == 0) {
 				mainLedPositions.push(ledObject.spurLed);
@@ -271,7 +270,9 @@ function textDisplayUPNW(leds) {
 		}
 	}
 	// Push in the offset for the spur junction point
-	for (var i = 0; i < SPUR_JUNCTION_POSITION; i++) {
+	var upnwString = 'UP-NW';
+	spurLedArray.push(upnwString);
+	for (var i = 0; i < SPUR_JUNCTION_POSITION-upnwString.length; i++) {
 		spurLedArray.push(' ');
 	}
 	// Push in the spur LEDs (original 0.5" LED spacing was 22 LEDs (.818))
@@ -294,14 +295,47 @@ function textDisplayUPNW(leds) {
 	console.log(mainLedArray.join(''));
 }
 
+const ELBURN_LED = 127;
+
+function textDisplayUPW(leds) {
+	console.log('UP-W');
+	var mainLedArray = [];
+	var mainLedPositions = [];
+// console.log("*******\n" + JSON.stringify(UPNW, null, 2));
+	leds.forEach((ledObject) => {
+		if (ledObject != null && ledObject != undefined) {
+			mainLedPositions.push(ledObject.spurLed);
+		}
+	});
+	// Push in the main line LEDs
+	for (var i = 0; i < HARVARD_LED-ELBURN_LED; i++) {
+		mainLedArray.push(' ');
+	}
+	for (var i = ELBURN_LED; i >= 0 ; i--) {
+		// Push train first, so it will take precidence
+		if (_.indexOf(mainLedPositions, i) >= 0) {
+			mainLedArray.push('%');
+		}
+		else if (i == 0) {
+			mainLedArray.push('O');
+		}
+		else if (i == ELBURN_LED) {
+			mainLedArray.push('E');
+		}
+		else {
+			mainLedArray.push('=');
+		}
+	}
+	console.log(mainLedArray.join(''));
+}
+
 function ledDisplayUPNW(leds) {
-	var UPNW = leds["UP-NW"];
 	var ledLightArray = [];
 	var palatine = Math.floor(PALATINE_LED/2);
 	var ogilve = 0;
 	// Add Ogilve and Palatine as blue LEDs
 	var postBodyArray = [{position:0, color:"blue"},{position:palatine, color:"blue"}];
-	UPNW.forEach((ledObject) => {
+	leds.forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			if (ledObject.spur == 0) {
 				ledLightArray.push(ledObject.spurLed);
@@ -345,6 +379,9 @@ function ledDisplayUPNW(leds) {
 		}
 	);
 }
+function ledDisplayUPW(leds) {
+	console.log('textDisplayUPW() - arrayLength = ' + leds.length);
+}
 
 // Process each line fetched
 function processFetchedData(sortedPositions, done) {
@@ -353,8 +390,10 @@ function processFetchedData(sortedPositions, done) {
 		ledsToLight[name] = processFetchedLineData(name, sortedPositions[name]);
 	});
 	log.debug("%s", JSON.stringify(ledsToLight, null, 4));
-	textDisplayUPNW(ledsToLight);
-	ledDisplayUPNW(ledsToLight);
+	textDisplayUPNW(ledsToLight['UP-NW']);
+	ledDisplayUPNW(ledsToLight['UP-NW']);
+	textDisplayUPW(ledsToLight['UP-W']);
+	ledDisplayUPW(ledsToLight['UP-W']);
 	done(null);
 }
 
