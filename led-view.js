@@ -230,6 +230,7 @@ function getLineData(name, done) {
 
 // This comes from calculations done outside this program or the spreadsheet
 const PALATINE_LED = 78;
+const FOX_RIVER_LED = 0;
 const HARVARD_LED = 182;
 const MCHENRY_LED = 21;
 const SPUR_JUNCTION_POSITION = 37;
@@ -296,6 +297,8 @@ function textDisplayUPNW(leds) {
 }
 
 const ELBURN_LED = 127;
+const WEST_CHICAGO_LED = 0;
+const COLLEGE_AVE_LED = 0;
 
 function textDisplayUPW(leds) {
 	console.log('UP-W');
@@ -381,11 +384,11 @@ function protoDisplayUPNWandUPW(leds) {
 		}
 		// ogilve for the UP-W line gets lit purple
 		else if (newPosition == 119) {
-			newColor = "purple"
+			newColor = "cyan"
 		}
 		// all trains at LED position 60 and above are UP-W, and "pink"
 		else if (newPosition > 59) {
-			newColor = "magenta"
+			newColor = "green"
 		}
 		// all other trains are UP-NW green
 		else {
