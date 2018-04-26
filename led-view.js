@@ -33,6 +33,18 @@ var sharedConstants = require(process.cwd() + '/constants');
 let GEOHASH_LENGTH  = sharedConstants.GEOHASH_LENGTH;
 let linesNamesArray = sharedConstants.linesNamesArray;
 
+// This comes from calculations done outside this program or the spreadsheet
+const HARVARD_LED = 182;
+const MCHENRY_LED = 21;
+const SPUR_JUNCTION_POSITION = 37;
+const ELBURN_LED = 127;
+
+// These will be calculated in the init routine
+var PALATINE_LED = 0;
+var FOX_RIVER_LED = 0;
+var WEST_CHICAGO_LED = 0;
+var COLLEGE_AVE_LED = 0;
+
 // The linesObject object contains all of the LED geohashes for each segment
 // of each spur for each line. The format is as follows:
 //
@@ -145,10 +157,40 @@ function init(done) {
 				linesData.forEach((dataForLine, index, array) => {
 					linesObject[dataForLine.line] = dataForLine.data;
 				});
+				initStationPositions();
 				done(null);
 			}
 		}
 	);
+}
+
+function initStationPositions() {
+	var palatine =    {
+		latitude: 42.113,
+		longitude: -88.049,
+		geohash: geohash.encode(42.113, -88.049, GEOHASH_LENGTH)
+	};
+	var foxRiver =    {
+		latitude: 42.198,
+		longitude: -88.219,
+		geohash: geohash.encode(42.198, -88.219, GEOHASH_LENGTH)
+	};
+	var collegeAve =  {
+		latitude: 41.868,
+		longitude: -88.090,
+		geohash: geohash.encode(41.868, -88.090, GEOHASH_LENGTH)
+	};
+	var westChicago = {
+		latitude: 41.881,
+		longitude: -88.199,
+		geohash: geohash.encode(41.881, -88.199, GEOHASH_LENGTH)
+	};
+
+	PALATINE_LED = matchLedWithTrain('UP-NW', palatine).spurLed;
+	FOX_RIVER_LED = matchLedWithTrain('UP-NW', foxRiver).spurLed;
+	COLLEGE_AVE_LED = matchLedWithTrain('UP-W', collegeAve).spurLed;
+	WEST_CHICAGO_LED = matchLedWithTrain('UP-W', westChicago).spurLed;
+
 }
 
 // TODO: functionalize
@@ -228,13 +270,6 @@ function getLineData(name, done) {
 	});
 }
 
-// This comes from calculations done outside this program or the spreadsheet
-const PALATINE_LED = 78;
-const FOX_RIVER_LED = 0;
-const HARVARD_LED = 182;
-const MCHENRY_LED = 21;
-const SPUR_JUNCTION_POSITION = 37;
-
 function textDisplayUPNW(leds) {
 	var mainLedArray = [];
 	var spurLedArray = [];
@@ -296,10 +331,6 @@ function textDisplayUPNW(leds) {
 	console.log(mainLedArray.join(''));
 }
 
-const ELBURN_LED = 127;
-const WEST_CHICAGO_LED = 0;
-const COLLEGE_AVE_LED = 0;
-
 function textDisplayUPW(leds) {
 	console.log('UP-W');
 	var mainLedArray = [];
@@ -335,10 +366,22 @@ function textDisplayUPW(leds) {
 function protoDisplayUPNWandUPW(leds) {
 	var ledLightArray = [];
 	var palatine = Math.floor(PALATINE_LED/2);
-	var elburn = Math.floor(((119 - ELBURN_LED) + 120)/2)
+	var foxRiver = Math.floor(FOX_RIVER_LED/2);
+	var collegeAve = Math.floor(((119 - COLLEGE_AVE_LED) + 120)/2)
+	var westChicago = Math.floor(((119 - WEST_CHICAGO_LED) + 120)/2)
+	var elburn = Math.floor(((119 - ELBURN_LED) + 120)/2);
 	var ogilve = 0;
 	// Add Ogilve (twice) and Palatine as blue LEDs
-	var postBodyArray = [{position:0, color:"blue"},{position:palatine, color:"blue"},{position:119, color:"blue"}];
+	var postBodyArray = [
+		// UP-NW stations and ogilve
+		{position:0, color:"blue"},
+		{position:palatine, color:"blue"},
+		{position:foxRiver, color:"blue"},
+		// UP-W stations and ogilve
+		{position:119, color:"blue"},
+		{position:collegeAve, color:"blue"},
+		{position:westChicago, color:"blue"}
+	];
 	leds['UP-NW'].forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			// FIXME: The UP-NW prototype LED strip is 60 LEDs long. This means
@@ -378,19 +421,19 @@ function protoDisplayUPNWandUPW(leds) {
 	var newPosition, newColor;
 	ledLightArray.forEach((ledIndex) => {
 		newPosition = Math.floor(ledIndex/2);
-		// ogilve and palatine get lit cyan if a train is present
-		if (newPosition == 0 || newPosition == palatine) {
+		// ogilve and palatine get lit a mixed color if a train is present, as does fox river
+		if (newPosition == 0 || newPosition == palatine || newPosition == foxRiver) {
 			newColor = "cyan";
 		}
-		// ogilve for the UP-W line gets lit purple
-		else if (newPosition == 119) {
+		// ogilve for the UP-W line gets lit as a mixed color, as do the stations
+		else if (newPosition == 119 || newPosition == collegeAve || newPosition == westChicago) {
 			newColor = "cyan"
 		}
-		// all trains at LED position 60 and above are UP-W, and "pink"
+		// all trains at LED position 60 and above are UP-W, and are painted the UP-W color
 		else if (newPosition > 59) {
 			newColor = "green"
 		}
-		// all other trains are UP-NW green
+		// all other trains are UP-NW color
 		else {
 			newColor = "green";
 		}
@@ -415,9 +458,6 @@ function protoDisplayUPNWandUPW(leds) {
 			}
 		}
 	);
-}
-function ledDisplayUPW(leds) {
-	console.log('textDisplayUPW() - arrayLength = ' + leds.length);
 }
 
 // Process each line fetched
