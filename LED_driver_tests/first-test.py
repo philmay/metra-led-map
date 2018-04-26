@@ -8,7 +8,7 @@ bibliopixel.log.setLogLevel(bibliopixel.log.DEBUG)
 from bibliopixel.drivers.serial import *
 from bibliopixel.drivers.driver_base import *
 # set number of pixels & LED type here
-length = 90
+length = 120
 driver = Serial(num = length, ledtype = LEDTYPE.WS2812B, c_order = ChannelOrder.GRB)
 
 # load the LEDStrip class
