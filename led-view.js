@@ -44,6 +44,8 @@ var PALATINE_LED = 0;
 var FOX_RIVER_LED = 0;
 var WEST_CHICAGO_LED = 0;
 var COLLEGE_AVE_LED = 0;
+var SCHAUMBURG_LED = 0;
+var BIG_TIMBER_LED = 0;
 
 // The linesObject object contains all of the LED geohashes for each segment
 // of each spur for each line. The format is as follows:
@@ -185,12 +187,23 @@ function initStationPositions() {
 		longitude: -88.199,
 		geohash: geohash.encode(41.881, -88.199, GEOHASH_LENGTH)
 	};
+	var schaumburg =  {
+		latitude: 41.989,
+		longitude: -88.118,
+		geohash: geohash.encode(41.989, -88.118, GEOHASH_LENGTH)
+	}
+	var bigTimber =   {
+		latitude: 42.059,
+		longitude: -88.327,
+		geohash: geohash.encode(42.059, -88.327, GEOHASH_LENGTH)
+	}
 
 	PALATINE_LED = matchLedWithTrain('UP-NW', palatine).spurLed;
 	FOX_RIVER_LED = matchLedWithTrain('UP-NW', foxRiver).spurLed;
 	COLLEGE_AVE_LED = matchLedWithTrain('UP-W', collegeAve).spurLed;
 	WEST_CHICAGO_LED = matchLedWithTrain('UP-W', westChicago).spurLed;
-
+	SCHAUMBURG_LED = matchLedWithTrain('MD-W', schaumburg).spurLed;
+	BIG_TIMBER_LED = matchLedWithTrain('MD-W', bigTimber).spurLed;
 }
 
 // TODO: functionalize
@@ -275,7 +288,6 @@ function textDisplayUPNW(leds) {
 	var spurLedArray = [];
 	var mainLedPositions = [];
 	var spurLedPositions = [];
-// console.log("*******\n" + JSON.stringify(UPNW, null, 2));
 	leds.forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			if (ledObject.spur == 0) {
@@ -335,7 +347,6 @@ function textDisplayUPW(leds) {
 	console.log('UP-W');
 	var mainLedArray = [];
 	var mainLedPositions = [];
-// console.log("*******\n" + JSON.stringify(UPNW, null, 2));
 	leds.forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			mainLedPositions.push(ledObject.spurLed);
@@ -356,6 +367,12 @@ function textDisplayUPW(leds) {
 		else if (i == ELBURN_LED) {
 			mainLedArray.push('E');
 		}
+		else if (i == COLLEGE_AVE_LED) {
+			mainLedArray.push('C');
+		}
+		else if (i == WEST_CHICAGO_LED) {
+			mainLedArray.push('W');
+		}
 		else {
 			mainLedArray.push('=');
 		}
@@ -363,7 +380,41 @@ function textDisplayUPW(leds) {
 	console.log(mainLedArray.join(''));
 }
 
-function protoDisplayUPNWandUPW(leds) {
+function textDisplayMDW(leds) {
+	console.log('MD-W');
+	var mainLedArray = [];
+	var mainLedPositions = [];
+	leds.forEach((ledObject) => {
+		if (ledObject != null && ledObject != undefined) {
+			mainLedPositions.push(ledObject.spurLed);
+		}
+	});
+	// Push in the main line LEDs
+	for (var i = 0; i < HARVARD_LED-BIG_TIMBER_LED; i++) {
+		mainLedArray.push(' ');
+	}
+	for (var i = BIG_TIMBER_LED; i >= 0 ; i--) {
+		// Push train first, so it will take precidence
+		if (_.indexOf(mainLedPositions, i) >= 0) {
+			mainLedArray.push('%');
+		}
+		else if (i == 0) {
+			mainLedArray.push('O');
+		}
+		else if (i == BIG_TIMBER_LED) {
+			mainLedArray.push('B');
+		}
+		else if (i == SCHAUMBURG_LED) {
+			mainLedArray.push('S');
+		}
+		else {
+			mainLedArray.push('=');
+		}
+	}
+	console.log(mainLedArray.join(''));
+}
+
+function protoDisplayAll(leds) {
 	var ledLightArray = [];
 	var palatine = Math.floor(PALATINE_LED/2);
 	var foxRiver = Math.floor(FOX_RIVER_LED/2);
@@ -468,8 +519,9 @@ function processFetchedData(sortedPositions, done) {
 	});
 	log.debug("%s", JSON.stringify(ledsToLight, null, 4));
 	textDisplayUPNW(ledsToLight['UP-NW']);
+	textDisplayMDW(ledsToLight['MD-W']);
 	textDisplayUPW(ledsToLight['UP-W']);
-	protoDisplayUPNWandUPW(ledsToLight);
+	protoDisplayAll(ledsToLight);
 	done(null);
 }
 
