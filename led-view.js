@@ -414,24 +414,47 @@ function textDisplayMDW(leds) {
 	console.log(mainLedArray.join(''));
 }
 
+// These constants represent the number of displayable locations for each line.
+// Some of the lines actually contain more or less than the number of displayable
+// locations, so the data will be truncated or the last few LEDs will not be lit
+// in some cases.
+// For the prototype, the actual number of LEDs is half the number of displayable
+// locations.
+const UPNW_DISP_LOCS = 120;
+const UPW_DISP_LOCS = 120;
+const UPW_MAX_INDEX = UPW_DISP_LOCS - 1;
+const MDW_DISP_LOCS = 120;
+
 function protoDisplayAll(leds) {
 	var ledLightArray = [];
+	// The Ogilve LEDs are all at the ends of the strips
+	var upnwOgilve = 0;
+	var upwOgilve = 119;
+	var mdwOgilve = 120;
+	// The other stations positions are calculated based on their LED number and
+	// the length of the strips
 	var palatine = Math.floor(PALATINE_LED/2);
 	var foxRiver = Math.floor(FOX_RIVER_LED/2);
-	var collegeAve = Math.floor(((119 - COLLEGE_AVE_LED) + 120)/2)
-	var westChicago = Math.floor(((119 - WEST_CHICAGO_LED) + 120)/2)
-	var elburn = Math.floor(((119 - ELBURN_LED) + 120)/2);
-	var ogilve = 0;
+	var collegeAve = Math.floor(((UPW_MAX_INDEX - COLLEGE_AVE_LED) + UPNW_DISP_LOCS)/2)
+	var westChicago = Math.floor(((UPW_MAX_INDEX - WEST_CHICAGO_LED) + UPNW_DISP_LOCS)/2)
+	var elburn = Math.floor(((UPW_MAX_INDEX - ELBURN_LED) + UPNW_DISP_LOCS)/2);
+	var schaumburg = Math.floor((SCHAUMBURG_LED + UPNW_DISP_LOCS + UPW_DISP_LOCS)/2);
+	var bigTimber = Math.floor((BIG_TIMBER_LED + UPNW_DISP_LOCS + UPW_DISP_LOCS)/2);
 	// Add Ogilve (twice) and Palatine as blue LEDs
 	var postBodyArray = [
 		// UP-NW stations and ogilve
-		{position:0, color:"blue"},
+		{position:upnwOgilve, color:"blue"},
 		{position:palatine, color:"blue"},
 		{position:foxRiver, color:"blue"},
 		// UP-W stations and ogilve
-		{position:119, color:"blue"},
+		{position:upwOgilve, color:"blue"},
 		{position:collegeAve, color:"blue"},
-		{position:westChicago, color:"blue"}
+		{position:westChicago, color:"blue"},
+		// MD-W stations and ogilve
+		{position:mdwOgilve, color:"blue"},
+		{position:schaumburg, color:"blue"},
+		{position:bigTimber, color:"blue"}
+
 	];
 	leds['UP-NW'].forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
@@ -439,7 +462,7 @@ function protoDisplayAll(leds) {
 			//        that LED positions >= 120 will not be displayed once the
 			//        2:1 poistion to LED mapping is done below. LEDs for positions
 			//        120 and higher will be uesd for the UP-W line.
-			if (ledObject.spur == 0 && ledObject.spurLed < 120) {
+			if (ledObject.spur == 0 && ledObject.spurLed < UPNW_DISP_LOCS) {
 				ledLightArray.push(ledObject.spurLed);
 			}
 			// TODO: This needs to be added back before any full display, but
@@ -463,8 +486,20 @@ function protoDisplayAll(leds) {
 	//        positions will be given a negative value and offset from 119.
 	leds['UP-W'].forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
-			if (ledObject.spurLed < 120) {
-				ledLightArray.push((119 - ledObject.spurLed) + 120);
+			if (ledObject.spurLed < UPW_DISP_LOCS) {
+				ledLightArray.push((UPW_MAX_INDEX - ledObject.spurLed) + UPNW_DISP_LOCS);
+			}
+		}
+	});
+	// The MD-W trains are displayed on the "last" strip, which is attached to
+	// the end of the UP-W strip. These train positions are in-order, in that
+	// the higher numbered positions are farther out (same as UP-NW). Since
+	// this is the furthest strip from the start of the chain, a two-strip
+	// offset (240) must be added.
+	leds['MD-W'].forEach((ledObject) => {
+		if (ledObject != null && ledObject != undefined) {
+			if (ledObject.spurLed < MDW_DISP_LOCS) {
+				ledLightArray.push(ledObject.spurLed + UPNW_DISP_LOCS + UPW_DISP_LOCS);
 			}
 		}
 	});
@@ -473,16 +508,24 @@ function protoDisplayAll(leds) {
 	ledLightArray.forEach((ledIndex) => {
 		newPosition = Math.floor(ledIndex/2);
 		// ogilve and palatine get lit a mixed color if a train is present, as does fox river
-		if (newPosition == 0 || newPosition == palatine || newPosition == foxRiver) {
+		if (newPosition == upnwOgilve || newPosition == palatine || newPosition == foxRiver) {
 			newColor = "cyan";
 		}
 		// ogilve for the UP-W line gets lit as a mixed color, as do the stations
-		else if (newPosition == 119 || newPosition == collegeAve || newPosition == westChicago) {
+		else if (newPosition == upwOgilve || newPosition == collegeAve || newPosition == westChicago) {
 			newColor = "cyan"
+		}
+		// same for MD-W
+		else if (newPosition == mdwOgilve || newPosition == schaumburg || newPosition == bigTimber) {
+			newColor = "cyan"
+		}
+		// all trains at LED positions 120 and above are MD-W trains, and are painted MD-W color
+		else if (newPosition > 119) {
+			newColor = "green";
 		}
 		// all trains at LED position 60 and above are UP-W, and are painted the UP-W color
 		else if (newPosition > 59) {
-			newColor = "green"
+			newColor = "green";
 		}
 		// all other trains are UP-NW color
 		else {
