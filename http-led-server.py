@@ -8,7 +8,7 @@ bibliopixel.log.setLogLevel(bibliopixel.log.DEBUG)
 
 from bibliopixel.drivers.serial import *
 from bibliopixel.drivers.driver_base import *
-driver = Serial(num = 120, ledtype = LEDTYPE.WS2812B, c_order = ChannelOrder.GRB)
+driver = Serial(num = 180, ledtype = LEDTYPE.WS2812B, c_order = ChannelOrder.GRB)
 
 from bibliopixel.layout import *
 led = Strip(driver)
