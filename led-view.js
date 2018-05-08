@@ -45,6 +45,7 @@ var FOX_RIVER_LED = 0;
 var WEST_CHICAGO_LED = 0;
 var COLLEGE_AVE_LED = 0;
 var SCHAUMBURG_LED = 0;
+var BARTLET_LED = 0;
 var BIG_TIMBER_LED = 0;
 
 // The linesObject object contains all of the LED geohashes for each segment
@@ -192,6 +193,11 @@ function initStationPositions() {
 		longitude: -88.118,
 		geohash: geohash.encode(41.989, -88.118, GEOHASH_LENGTH)
 	}
+	var bartlet =     {
+		latitude: 41.992,
+		longitude: -88.183,
+		geohash: geohash.encode(41.992, -88.183, GEOHASH_LENGTH)
+	}
 	var bigTimber =   {
 		latitude: 42.059,
 		longitude: -88.327,
@@ -203,6 +209,7 @@ function initStationPositions() {
 	COLLEGE_AVE_LED = matchLedWithTrain('UP-W', collegeAve).spurLed;
 	WEST_CHICAGO_LED = matchLedWithTrain('UP-W', westChicago).spurLed;
 	SCHAUMBURG_LED = matchLedWithTrain('MD-W', schaumburg).spurLed;
+	BARTLET_LED = matchLedWithTrain('MD-W', bartlet).spurLed;
 	BIG_TIMBER_LED = matchLedWithTrain('MD-W', bigTimber).spurLed;
 }
 
@@ -404,6 +411,9 @@ function textDisplayMDW(leds) {
 		else if (i == BIG_TIMBER_LED) {
 			mainLedArray.push('B');
 		}
+		else if (i == BARTLET_LED) {
+			mainLedArray.push('B');
+		}
 		else if (i == SCHAUMBURG_LED) {
 			mainLedArray.push('S');
 		}
@@ -422,8 +432,9 @@ function textDisplayMDW(leds) {
 // locations.
 const UPNW_DISP_LOCS = 120;
 const UPW_DISP_LOCS = 120;
-const UPW_MAX_INDEX = UPW_DISP_LOCS - 1;
+// const UPW_MAX_INDEX = UPW_DISP_LOCS - 1;
 const MDW_DISP_LOCS = 120;
+const MDW_MAX_INDEX = MDW_DISP_LOCS - 1;
 
 function protoDisplayAll(leds) {
 	var ledLightArray = [];
@@ -433,29 +444,35 @@ function protoDisplayAll(leds) {
 	var mdwOgilve = 120;
 	// The other stations positions are calculated based on their LED number and
 	// the length of the strips
+	// Strip 1, UP-NW
 	var palatine = Math.floor(PALATINE_LED/2);
 	var foxRiver = Math.floor(FOX_RIVER_LED/2);
-	var collegeAve = Math.floor(((UPW_MAX_INDEX - COLLEGE_AVE_LED) + UPNW_DISP_LOCS)/2)
-	var westChicago = Math.floor(((UPW_MAX_INDEX - WEST_CHICAGO_LED) + UPNW_DISP_LOCS)/2)
-	var elburn = Math.floor(((UPW_MAX_INDEX - ELBURN_LED) + UPNW_DISP_LOCS)/2);
-	var schaumburg = Math.floor((SCHAUMBURG_LED + UPNW_DISP_LOCS + UPW_DISP_LOCS)/2);
-	var bigTimber = Math.floor((BIG_TIMBER_LED + UPNW_DISP_LOCS + UPW_DISP_LOCS)/2);
-	// Add Ogilve (twice) and Palatine as blue LEDs
+	// Strip 2, MD-W
+	var schaumburg = Math.floor(((MDW_MAX_INDEX - SCHAUMBURG_LED) + UPNW_DISP_LOCS)/2);
+	var bartlet = Math.floor(((MDW_MAX_INDEX - BARTLET_LED) + UPNW_DISP_LOCS)/2)
+	var bigTimber = Math.floor(((MDW_MAX_INDEX - BIG_TIMBER_LED) + UPNW_DISP_LOCS)/2);
+	// Strip 3, UP-W
+	var collegeAve = Math.floor((COLLEGE_AVE_LED + UPNW_DISP_LOCS + MDW_DISP_LOCS)/2);
+	var westChicago = Math.floor((WEST_CHICAGO_LED + UPNW_DISP_LOCS + MDW_DISP_LOCS)/2);
+	var elburn = Math.floor((ELBURN_LED + UPNW_DISP_LOCS + MDW_DISP_LOCS)/2);
+	// Add Ogilve (thrice) and stations as blue LEDs
 	var postBodyArray = [
 		// UP-NW stations and ogilve
 		{position:upnwOgilve, color:"blue"},
 		{position:palatine, color:"blue"},
 		{position:foxRiver, color:"blue"},
-		// UP-W stations and ogilve
-		{position:upwOgilve, color:"blue"},
-		{position:collegeAve, color:"blue"},
-		{position:westChicago, color:"blue"},
 		// MD-W stations and ogilve
 		{position:mdwOgilve, color:"blue"},
 		{position:schaumburg, color:"blue"},
-		{position:bigTimber, color:"blue"}
-
+		{position:bartlet, color:"blue"},
+		{position:bigTimber, color:"blue"},
+		// UP-W stations and ogilve
+		{position:upwOgilve, color:"blue"},
+		{position:collegeAve, color:"blue"},
+		{position:westChicago, color:"blue"}
 	];
+
+	// Strip 1
 	leds['UP-NW'].forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			// FIXME: The UP-NW prototype LED strip is 60 LEDs long. This means
@@ -475,34 +492,53 @@ function protoDisplayAll(leds) {
 			// }
 		}
 	});
-	// FIXME: Since the UP-NW prototype LED strip is 60 LEDs long, and the UP-W
+
+	// Strip 2
+	// FIXME: Since the UP-NW prototype LED strip is 60 LEDs long, and the MD-W
 	//        LEDs will be attached directly to the end of the UP-NW strip, all
 	//        positions >= 120 (divide by two for prototype LED positions) are
-	//        UP-W positions. So, the UP-W is offset by 120. In addition, the
+	//        MD-W positions. So, the MD-W is offset by 120. In addition, the
 	//        positions are "reversed", since the LED strip in our physical layout
-	//        wraps around in a U-shape. In other words, the farther-out trains
-	//        on the UP-W line are in lower numbered positions, which is the
+	//        wraps around in a Z-shape. In other words, the farther-out trains
+	//        on the MD-W line are in lower numbered positions, which is the
 	//        opposite to what the UP-NW situation is. For this reason, all
 	//        positions will be given a negative value and offset from 119.
-	leds['UP-W'].forEach((ledObject) => {
-		if (ledObject != null && ledObject != undefined) {
-			if (ledObject.spurLed < UPW_DISP_LOCS) {
-				ledLightArray.push((UPW_MAX_INDEX - ledObject.spurLed) + UPNW_DISP_LOCS);
-			}
-		}
-	});
-	// The MD-W trains are displayed on the "last" strip, which is attached to
-	// the end of the UP-W strip. These train positions are in-order, in that
-	// the higher numbered positions are farther out (same as UP-NW). Since
-	// this is the furthest strip from the start of the chain, a two-strip
-	// offset (240) must be added.
 	leds['MD-W'].forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			if (ledObject.spurLed < MDW_DISP_LOCS) {
-				ledLightArray.push(ledObject.spurLed + UPNW_DISP_LOCS + UPW_DISP_LOCS);
+				ledLightArray.push((MDW_MAX_INDEX - ledObject.spurLed) + UPNW_DISP_LOCS)
 			}
 		}
 	});
+	// leds['UP-W'].forEach((ledObject) => {
+	// 	if (ledObject != null && ledObject != undefined) {
+	// 		if (ledObject.spurLed < UPW_DISP_LOCS) {
+	// 			ledLightArray.push((UPW_MAX_INDEX - ledObject.spurLed) + UPNW_DISP_LOCS);
+	// 		}
+	// 	}
+	// });
+
+	// Strip 3
+	// The UP-W trains are displayed on the "last" strip, which is attached to
+	// the end of the MD-W strip. These train positions are in-order, in that
+	// the higher numbered positions are farther out (same as UP-NW). Since
+	// this is the furthest strip from the start of the chain, a two-strip
+	// offset (240) must be added.
+	leds['UP-W'].forEach((ledObject) => {
+		if (ledObject != null && ledObject != undefined) {
+			if (ledObject.spurLed < UPW_DISP_LOCS) {
+				ledLightArray.push(ledObject.spurLed + UPNW_DISP_LOCS + MDW_DISP_LOCS);
+			}
+		}
+	});
+	// leds['MD-W'].forEach((ledObject) => {
+	// 	if (ledObject != null && ledObject != undefined) {
+	// 		if (ledObject.spurLed < MDW_DISP_LOCS) {
+	// 			ledLightArray.push(ledObject.spurLed + UPNW_DISP_LOCS + UPW_DISP_LOCS);
+	// 		}
+	// 	}
+	// });
+
 	// Squeeze the array in half for the protytype strips
 	var newPosition, newColor;
 	ledLightArray.forEach((ledIndex) => {
@@ -516,7 +552,7 @@ function protoDisplayAll(leds) {
 			newColor = "cyan"
 		}
 		// same for MD-W
-		else if (newPosition == mdwOgilve || newPosition == schaumburg || newPosition == bigTimber) {
+		else if (newPosition == mdwOgilve || newPosition == schaumburg || newPosition == bartlet || newPosition == bigTimber) {
 			newColor = "cyan"
 		}
 		// all trains at LED positions 120 and above are MD-W trains, and are painted MD-W color
