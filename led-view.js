@@ -545,15 +545,15 @@ function protoDisplayAll(leds) {
 		newPosition = Math.floor(ledIndex/2);
 		// ogilve and palatine get lit a mixed color if a train is present, as does fox river
 		if (newPosition == upnwOgilve || newPosition == palatine || newPosition == foxRiver) {
-			newColor = "cyan";
+			newColor = "SpringGreen";
 		}
 		// ogilve for the UP-W line gets lit as a mixed color, as do the stations
 		else if (newPosition == upwOgilve || newPosition == collegeAve || newPosition == westChicago) {
-			newColor = "cyan"
+			newColor = "SpringGreen"
 		}
 		// same for MD-W
 		else if (newPosition == mdwOgilve || newPosition == schaumburg || newPosition == bartlet || newPosition == bigTimber) {
-			newColor = "cyan"
+			newColor = "SpringGreen"
 		}
 		// all trains at LED positions 120 and above are MD-W trains, and are painted MD-W color
 		else if (newPosition > 119) {
