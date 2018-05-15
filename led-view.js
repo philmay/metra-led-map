@@ -458,18 +458,18 @@ function protoDisplayAll(leds) {
 	// Add Ogilve (thrice) and stations as blue LEDs
 	var postBodyArray = [
 		// UP-NW stations and ogilve
-		{position:upnwOgilve, color:"blue"},
-		{position:palatine, color:"blue"},
-		{position:foxRiver, color:"blue"},
+		{position:upnwOgilve, color:"DarkBlue"},
+		{position:palatine, color:"DarkBlue"},
+		{position:foxRiver, color:"DarkBlue"},
 		// MD-W stations and ogilve
-		{position:mdwOgilve, color:"blue"},
-		{position:schaumburg, color:"blue"},
-		{position:bartlet, color:"blue"},
-		{position:bigTimber, color:"blue"},
+		{position:mdwOgilve, color:"DarkBlue"},
+		{position:schaumburg, color:"DarkBlue"},
+		{position:bartlet, color:"DarkBlue"},
+		{position:bigTimber, color:"DarkBlue"},
 		// UP-W stations and ogilve
-		{position:upwOgilve, color:"blue"},
-		{position:collegeAve, color:"blue"},
-		{position:westChicago, color:"blue"}
+		{position:upwOgilve, color:"DarkBlue"},
+		{position:collegeAve, color:"DarkBlue"},
+		{position:westChicago, color:"DarkBlue"}
 	];
 
 	// Strip 1
