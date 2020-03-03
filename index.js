@@ -118,20 +118,31 @@ function startFetching (done) {
 //		],
 //		...
 //	}
+var numFails = 0;
+
 function fetchPositionData() {
 	log.debug("fetchPositionData()");
 	var sortedTrainPositions = {};
 	log.info("Fetching METRA data (%s)", baseUrl + positionsPath);
 	metraClient.get(positionsPath, function(error, req, res, locArray) {
 		if (error) {
-			log.error("    fetch failed");
+            numFails += 1;
+			log.error("    fetch failed - %d", numFails);
+            if (numFails > 10) {
+                updateViews({ error: true });
+            }
 		}
 		else if (locArray.length == 0) {
-			log.error("    fetch returned zero-length locArray");
+            numFails += 1;
+			log.error("    fetch returned zero-length locArray - %d", numFails);
+            if (numFails > 10) {
+                updateViews({ error: true });
+            }
 		}
 		else {
 			log.info("    successfully fetched data for positions");
 			log.info("        length = %d", locArray.length);
+            numFails = 0;
 			locArray.forEach((locObject, index, array) => {
 				var line = locObject.vehicle.trip.route_id;
 				if (!_.has(sortedTrainPositions, line)) {

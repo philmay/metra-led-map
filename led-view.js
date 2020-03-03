@@ -478,7 +478,7 @@ function protoDisplayAll(leds) {
 			// FIXME: The UP-NW prototype LED strip is 60 LEDs long. This means
 			//        that LED positions >= 120 will not be displayed once the
 			//        2:1 poistion to LED mapping is done below. LEDs for positions
-			//        120 and higher will be uesd for the UP-W line.
+			//        120 and higher will be used for the UP-W line.
 			if (ledObject.spur == 0 && ledObject.spurLed < UPNW_DISP_LOCS) {
 				ledLightArray.push(ledObject.spurLed);
 			}
@@ -588,6 +588,81 @@ function protoDisplayAll(leds) {
 			}
 		}
 	);
+}
+
+//
+// NO WIFI  - .....**.*...**.**.**......*.**.**...*.*...*.*.**.*...*.*....
+//            555555555544444444443333333333222222222211111111119876543210
+//            98765432109876543210987654321098765432109876543210
+//
+function protoDisplayError() {
+    var postBodyArray = [
+		// UP-NW stations and ogilve
+		{position:4, color:"red"},
+        {position:6, color:"red"},
+        {position:10, color:"red"},
+        {position:12, color:"red"},
+        {position:13, color:"red"},
+        {position:15, color:"red"},
+        {position:17, color:"red"},
+        {position:21, color:"red"},
+        {position:23, color:"red"},
+        {position:27, color:"red"},
+        {position:28, color:"red"},
+        {position:30, color:"red"},
+        {position:31, color:"red"},
+        {position:33, color:"red"},
+        {position:40, color:"red"},
+        {position:41, color:"red"},
+        {position:43, color:"red"},
+        {position:44, color:"red"},
+        {position:46, color:"red"},
+        {position:47, color:"red"},
+        {position:51, color:"red"},
+        {position:53, color:"red"},
+        {position:54, color:"red"}
+	];
+
+    // POST new array to LED server
+	request.post(
+		{
+			headers: {'Content-Type' : 'application/json'},
+			uri: 'http://localhost:8675',
+			body: JSON.stringify(postBodyArray)
+		},
+		function(error, response, body) {
+			if (error) {
+				log.error('POST to LED server resulted in an error - %j', error);
+			}
+			else if (response.statusCode != 201) {
+				log.warn('POST to LED server returned an error code (%d)', response.statusCode);
+			}
+			else {
+				log.debug('POST to LED server succeeded');
+			}
+		}
+	);
+}
+
+
+/******************************************************************************/
+// ENTRY POINT
+function displayData(sortedPositions, done) {
+    if (sortedPositions.error) {
+        processFetchedError(done);
+    }
+    else {
+        processFetchedData(sortedPositions, done);
+    }
+}
+/******************************************************************************/
+
+
+// Call function that creates a "no wifi" error message
+function processFetchedError(done) {
+    log.error("NO WIFI error display processedFetchedError()");
+    protoDisplayError();
+    done(null);
 }
 
 // Process each line fetched
@@ -724,4 +799,4 @@ function getSpurLedCount(name, spur, segment, led) {
 }
 
 module.exports.init = init;
-module.exports.displayData = processFetchedData;
+module.exports.displayData = displayData;
