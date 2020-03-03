@@ -573,7 +573,7 @@ function protoDisplayAll(leds) {
 	request.post(
 		{
 			headers: {'Content-Type' : 'application/json'},
-			uri: 'http://localhost:8675',
+			uri: 'http://127.0.0.1:8675',
 			body: JSON.stringify(postBodyArray)
 		},
 		function(error, response, body) {
@@ -597,7 +597,6 @@ function protoDisplayAll(leds) {
 //
 function protoDisplayError() {
     var postBodyArray = [
-		// UP-NW stations and ogilve
 		{position:4, color:"red"},
         {position:6, color:"red"},
         {position:10, color:"red"},
@@ -627,7 +626,7 @@ function protoDisplayError() {
 	request.post(
 		{
 			headers: {'Content-Type' : 'application/json'},
-			uri: 'http://localhost:8675',
+			uri: 'http://127.0.0.1:8675',
 			body: JSON.stringify(postBodyArray)
 		},
 		function(error, response, body) {
