@@ -320,6 +320,9 @@ function textDisplayUPNW(leds) {
 		else if (i == HARVARD_LED) {
 			mainLedArray.push('H');
 		}
+		else if (i == FOX_RIVER_LED) {
+			mainLedArray.push('F');
+		}
 		else {
 			mainLedArray.push('=');
 		}
