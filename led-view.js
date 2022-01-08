@@ -674,9 +674,9 @@ function processFetchedData(sortedPositions, done) {
 		ledsToLight[name] = processFetchedLineData(name, sortedPositions[name]);
 	});
 	log.debug("%s", JSON.stringify(ledsToLight, null, 4));
-	textDisplayUPNW(ledsToLight['UP-NW']);
-	textDisplayMDW(ledsToLight['MD-W']);
-	textDisplayUPW(ledsToLight['UP-W']);
+	// textDisplayUPNW(ledsToLight['UP-NW']);
+	// textDisplayMDW(ledsToLight['MD-W']);
+	// textDisplayUPW(ledsToLight['UP-W']);
 	protoDisplayAll(ledsToLight);
 	done(null);
 }
