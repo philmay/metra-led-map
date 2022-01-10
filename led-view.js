@@ -604,7 +604,6 @@ function protoDisplayAll(leds) {
 				newColor = "White";
 				log.error('UP-NW station color assignment - direction value not recognized - %s', ledObject.direction);
 			}
-console.log("******* UP-NW station - %s, %d", newColor, newPosition);
 		}
 		// ogilve for the UP-W line gets lit as a mixed color, as do the stations
 		else if (newPosition == upwOgilve || newPosition == collegeAve || newPosition == westChicago) {
@@ -618,7 +617,6 @@ console.log("******* UP-NW station - %s, %d", newColor, newPosition);
 				newColor = "White";
 				log.error('UP-w station color assignment - direction value not recognized - %s', ledObject.direction);
 			}
-console.log("******* UP-W station - %s, %d", newColor, newPosition);
 		}
 		// same for MD-W
 		else if (newPosition == mdwOgilve || newPosition == schaumburg || newPosition == bartlet || newPosition == bigTimber) {
@@ -632,7 +630,6 @@ console.log("******* UP-W station - %s, %d", newColor, newPosition);
 				newColor = "White";
 				log.error('MD-W station color assignment - direction value not recognized - %s', ledObject.direction);
 			}
-console.log("******* MD-W station - %s, %d", newColor, newPosition);
 		}
 		// all trains at LED positions 120 and above are UP-W trains, and are painted UP-W color
 		else if (newPosition > 119) {
@@ -646,7 +643,6 @@ console.log("******* MD-W station - %s, %d", newColor, newPosition);
 				newColor = "White";
 				log.error('UP-W train color assignment - direction value not recognized - %s', ledObject.direction);
 			}
-console.log("******* UP-W train - %s, %d", newColor, newPosition);
 		}
 		// all trains at LED position 60 and above are MD-W, and are painted the MD-W color
 		else if (newPosition > 59) {
@@ -660,7 +656,6 @@ console.log("******* UP-W train - %s, %d", newColor, newPosition);
 				newColor = "White";
 				log.error('MD-W train color assignment - direction value not recognized - %s', ledObject.direction);
 			}
-console.log("******* MD-W train - %s, %d", newColor, newPosition);
 		}
 		// all other trains are UP-NW color
 		else {
@@ -674,7 +669,6 @@ console.log("******* MD-W train - %s, %d", newColor, newPosition);
 				newColor = "White";
 				log.error('UP-NW train color assignment - direction value not recognized - %s', ledObject.direction);
 			}
-console.log("******* UP-NW train - %s, %d", newColor, newPosition);
 		}
 		postBodyArray.push({position:newPosition, color:newColor});
 	});
@@ -780,9 +774,9 @@ function processFetchedData(sortedPositions, done) {
 		ledsToLight[name] = processFetchedLineData(name, sortedPositions[name]);
 	});
 	log.debug("%s", JSON.stringify(ledsToLight, null, 4));
-	textDisplayUPNW(ledsToLight['UP-NW']);
-	textDisplayMDW(ledsToLight['MD-W']);
-	textDisplayUPW(ledsToLight['UP-W']);
+	// textDisplayUPNW(ledsToLight['UP-NW']);
+	// textDisplayMDW(ledsToLight['MD-W']);
+	// textDisplayUPW(ledsToLight['UP-W']);
 	protoDisplayAll(ledsToLight);
 	done(null);
 }
