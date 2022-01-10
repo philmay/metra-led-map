@@ -49,7 +49,12 @@ class MyHandler(BaseHTTPRequestHandler):
             for led_object in body_array:
                 if 'position' in led_object.keys():
                     if 'color' in led_object.keys():
-                        led_color = colors.names.name_to_color(led_object['color'])
+                        if led_object['color'].lower() == 'darkyellow':
+                            led_color = (139, 139, 0)
+                        elif led_object['color'].lower() == 'springviolet':
+                            led_color = (255, 0, 127)
+                        else:
+                            led_color = colors.names.name_to_color(led_object['color'])
                     else:
                         print("\tWARNING: LED 'color' attribute missing = white")
                         led_color = colors.names.name_to_color('White')

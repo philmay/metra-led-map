@@ -153,18 +153,24 @@ function fetchPositionData() {
 					locObject.vehicle.position.longitude,
 					GEOHASH_LENGTH
 				);
-				sortedTrainPositions[line].push(
-					{
-						timestamp: locObject["metra-publish-tstamp"],
-						start_time: locObject.vehicle.trip.start_time,
-						start_date: locObject.vehicle.trip.start_date,
-						latitude: locObject.vehicle.position.latitude,
-					    longitude: locObject.vehicle.position.longitude,
-						label: locObject.vehicle.vehicle.label,
-						id: locObject.vehicle.vehicle.id,
-						geohash: positionGeohash
-					}
-				);
+				var positionObject = {
+					timestamp: locObject["metra-publish-tstamp"],
+					start_time: locObject.vehicle.trip.start_time,
+					start_date: locObject.vehicle.trip.start_date,
+					latitude: locObject.vehicle.position.latitude,
+					longitude: locObject.vehicle.position.longitude,
+					label: locObject.vehicle.vehicle.label,
+					id: locObject.vehicle.vehicle.id,
+					geohash: positionGeohash
+				};
+				var labelInt = parseInt(positionObject.label);
+				if ((labelInt % 2) == 0) {
+					positionObject.direction = 'inbound';
+				}
+				else {
+					positionObject.direction = 'outbound';
+				}
+				sortedTrainPositions[line].push(positionObject);
 			});
 			updateViews(sortedTrainPositions);
 		}

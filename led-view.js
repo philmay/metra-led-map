@@ -295,21 +295,34 @@ function textDisplayUPNW(leds) {
 	var spurLedArray = [];
 	var mainLedPositions = [];
 	var spurLedPositions = [];
+	var mainLedDirections = [];
+	var spurLedDirections = [];
 	leds.forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			if (ledObject.spur == 0) {
 				mainLedPositions.push(ledObject.spurLed);
+				mainLedDirections.push(ledObject.direction);
 			}
 			if (ledObject.spur == 1) {
 				spurLedPositions.push(ledObject.spurLed);
+				spurLedDirections.push(ledObject.direction);
 			}
 		}
 	});
 	// Push in the main line LEDs
 	for (var i = HARVARD_LED; i >= 0 ; i--) {
 		// Push train first, so it will take precidence
-		if (_.indexOf(mainLedPositions, i) >= 0) {
-			mainLedArray.push('%');
+		var indexInArray = _.indexOf(mainLedPositions, i);
+		if (indexInArray >= 0) {
+			if (mainLedDirections[indexInArray] == 'inbound') {
+				mainLedArray.push('>');
+			}
+			else if (mainLedDirections[indexInArray] == 'outbound') {
+				mainLedArray.push('<');
+			}
+			else {
+				mainLedArray.push('%');
+			}
 		}
 		else if (i == 0) {
 			mainLedArray.push('O');
@@ -335,8 +348,17 @@ function textDisplayUPNW(leds) {
 	}
 	// Push in the spur LEDs (original 0.5" LED spacing was 22 LEDs (.818))
 	for (var i = MCHENRY_LED; i >= 0; i--) {
-		if (_.indexOf(spurLedPositions, i) >= 0) {
-			spurLedArray.push('%');
+		var indexInArray = _.indexOf(spurLedPositions, i);
+		if (indexInArray >= 0) {
+			if (spurLedDirections[indexInArray] == 'inbound') {
+				spurLedArray.push('>');
+			}
+			else if (spurLedDirections[indexInArray] == 'outbound') {
+				spurLedArray.push('<');
+			}
+			else {
+				spurLedArray.push('%');
+			}
 		}
 		else if (i == MCHENRY_LED) {
 			spurLedArray.push('M');
@@ -357,9 +379,11 @@ function textDisplayUPW(leds) {
 	console.log('UP-W');
 	var mainLedArray = [];
 	var mainLedPositions = [];
+	var mainLedDirections = [];
 	leds.forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			mainLedPositions.push(ledObject.spurLed);
+			mainLedDirections.push(ledObject.direction);
 		}
 	});
 	// Push in the main line LEDs
@@ -368,8 +392,17 @@ function textDisplayUPW(leds) {
 	}
 	for (var i = ELBURN_LED; i >= 0 ; i--) {
 		// Push train first, so it will take precidence
-		if (_.indexOf(mainLedPositions, i) >= 0) {
-			mainLedArray.push('%');
+		var indexInArray = _.indexOf(mainLedPositions, i);
+		if (indexInArray >= 0) {
+			if (mainLedDirections[indexInArray] == 'inbound') {
+				mainLedArray.push('>');
+			}
+			else if (mainLedDirections[indexInArray] == 'outbound') {
+				mainLedArray.push('<');
+			}
+			else {
+				mainLedArray.push('%');
+			}
 		}
 		else if (i == 0) {
 			mainLedArray.push('O');
@@ -394,9 +427,11 @@ function textDisplayMDW(leds) {
 	console.log('MD-W');
 	var mainLedArray = [];
 	var mainLedPositions = [];
+	var mainLedDirections = [];
 	leds.forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			mainLedPositions.push(ledObject.spurLed);
+			mainLedDirections.push(ledObject.direction);
 		}
 	});
 	// Push in the main line LEDs
@@ -405,8 +440,17 @@ function textDisplayMDW(leds) {
 	}
 	for (var i = BIG_TIMBER_LED; i >= 0 ; i--) {
 		// Push train first, so it will take precidence
-		if (_.indexOf(mainLedPositions, i) >= 0) {
-			mainLedArray.push('%');
+		var indexInArray = _.indexOf(mainLedPositions, i);
+		if (indexInArray >= 0) {
+			if (mainLedDirections[indexInArray] == 'inbound') {
+				mainLedArray.push('>');
+			}
+			else if (mainLedDirections[indexInArray] == 'outbound') {
+				mainLedArray.push('<');
+			}
+			else {
+				mainLedArray.push('%');
+			}
 		}
 		else if (i == 0) {
 			mainLedArray.push('O');
@@ -458,21 +502,23 @@ function protoDisplayAll(leds) {
 	var collegeAve = Math.floor((COLLEGE_AVE_LED + UPNW_DISP_LOCS + MDW_DISP_LOCS)/2);
 	var westChicago = Math.floor((WEST_CHICAGO_LED + UPNW_DISP_LOCS + MDW_DISP_LOCS)/2);
 	var elburn = Math.floor((ELBURN_LED + UPNW_DISP_LOCS + MDW_DISP_LOCS)/2);
-	// Add Ogilve (thrice) and stations as blue LEDs
+	// Add Ogilve (thrice) and stations as blue or yellow LEDs
+	var stationColor = 'DarkBlue';
+	// var stationColor = 'DarkYellow';
 	var postBodyArray = [
 		// UP-NW stations and ogilve
-		{position:upnwOgilve, color:"DarkBlue"},
-		{position:palatine, color:"DarkBlue"},
-		{position:foxRiver, color:"DarkBlue"},
+		{position:upnwOgilve, color:stationColor},
+		{position:palatine, color:stationColor},
+		{position:foxRiver, color:stationColor},
 		// MD-W stations and ogilve
-		{position:mdwOgilve, color:"DarkBlue"},
-		{position:schaumburg, color:"DarkBlue"},
-		{position:bartlet, color:"DarkBlue"},
-		{position:bigTimber, color:"DarkBlue"},
+		{position:mdwOgilve, color:stationColor},
+		{position:schaumburg, color:stationColor},
+		{position:bartlet, color:stationColor},
+		{position:bigTimber, color:stationColor},
 		// UP-W stations and ogilve
-		{position:upwOgilve, color:"DarkBlue"},
-		{position:collegeAve, color:"DarkBlue"},
-		{position:westChicago, color:"DarkBlue"}
+		{position:upwOgilve, color:stationColor},
+		{position:collegeAve, color:stationColor},
+		{position:westChicago, color:stationColor}
 	];
 
 	// Strip 1
@@ -483,7 +529,7 @@ function protoDisplayAll(leds) {
 			//        2:1 poistion to LED mapping is done below. LEDs for positions
 			//        120 and higher will be used for the UP-W line.
 			if (ledObject.spur == 0 && ledObject.spurLed < UPNW_DISP_LOCS) {
-				ledLightArray.push(ledObject.spurLed);
+				ledLightArray.push({ledIndex:ledObject.spurLed, direction:ledObject.direction});
 			}
 			// TODO: This needs to be added back before any full display, but
 			//       the offset is unknown (based on how UP-W fits into the whole
@@ -509,7 +555,7 @@ function protoDisplayAll(leds) {
 	leds['MD-W'].forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			if (ledObject.spurLed < MDW_DISP_LOCS) {
-				ledLightArray.push((MDW_MAX_INDEX - ledObject.spurLed) + UPNW_DISP_LOCS)
+				ledLightArray.push({ledIndex:(MDW_MAX_INDEX - ledObject.spurLed) + UPNW_DISP_LOCS, direction:ledObject.direction});
 			}
 		}
 	});
@@ -530,7 +576,7 @@ function protoDisplayAll(leds) {
 	leds['UP-W'].forEach((ledObject) => {
 		if (ledObject != null && ledObject != undefined) {
 			if (ledObject.spurLed < UPW_DISP_LOCS) {
-				ledLightArray.push(ledObject.spurLed + UPNW_DISP_LOCS + MDW_DISP_LOCS);
+				ledLightArray.push({ledIndex:ledObject.spurLed + UPNW_DISP_LOCS + MDW_DISP_LOCS, direction:ledObject.direction});
 			}
 		}
 	});
@@ -543,32 +589,92 @@ function protoDisplayAll(leds) {
 	// });
 
 	// Squeeze the array in half for the protytype strips
-	var newPosition, newColor;
-	ledLightArray.forEach((ledIndex) => {
-		newPosition = Math.floor(ledIndex/2);
+	var newPosition, newColor, newDirection;
+	ledLightArray.forEach((ledObject) => {
+		newPosition = Math.floor(ledObject.ledIndex/2);
 		// ogilve and palatine get lit a mixed color if a train is present, as does fox river
 		if (newPosition == upnwOgilve || newPosition == palatine || newPosition == foxRiver) {
-			newColor = "SpringGreen";
+			if (ledObject.direction == 'outbound') {
+				newColor = "SpringGreen";
+			}
+			else if (ledObject.direction == 'inbound') {
+				newColor = "SpringViolet";	// SpringViolet is not in bibliopixel palate, so I check for it directly in the python server
+			}
+			else {
+				newColor = "White";
+				log.error('UP-NW station color assignment - direction value not recognized - %s', ledObject.direction);
+			}
+console.log("******* UP-NW station - %s, %d", newColor, newPosition);
 		}
 		// ogilve for the UP-W line gets lit as a mixed color, as do the stations
 		else if (newPosition == upwOgilve || newPosition == collegeAve || newPosition == westChicago) {
-			newColor = "SpringGreen"
+			if (ledObject.direction == 'outbound') {
+				newColor = "SpringGreen";
+			}
+			else if (ledObject.direction == 'inbound') {
+				newColor = "SpringViolet";	// SpringViolet is not in bibliopixel palate, so I check for it directly in the python server
+			}
+			else {
+				newColor = "White";
+				log.error('UP-w station color assignment - direction value not recognized - %s', ledObject.direction);
+			}
+console.log("******* UP-W station - %s, %d", newColor, newPosition);
 		}
 		// same for MD-W
 		else if (newPosition == mdwOgilve || newPosition == schaumburg || newPosition == bartlet || newPosition == bigTimber) {
-			newColor = "SpringGreen"
+			if (ledObject.direction == 'outbound') {
+				newColor = "SpringGreen";
+			}
+			else if (ledObject.direction == 'inbound') {
+				newColor = "SpringViolet";	// SpringViolet is not in bibliopixel palate, so I check for it directly in the python server
+			}
+			else {
+				newColor = "White";
+				log.error('MD-W station color assignment - direction value not recognized - %s', ledObject.direction);
+			}
+console.log("******* MD-W station - %s, %d", newColor, newPosition);
 		}
-		// all trains at LED positions 120 and above are MD-W trains, and are painted MD-W color
+		// all trains at LED positions 120 and above are UP-W trains, and are painted UP-W color
 		else if (newPosition > 119) {
-			newColor = "green";
+			if (ledObject.direction == 'outbound') {
+				newColor = "green";
+			}
+			else if (ledObject.direction == 'inbound') {
+				newColor = "red";
+			}
+			else {
+				newColor = "White";
+				log.error('UP-W train color assignment - direction value not recognized - %s', ledObject.direction);
+			}
+console.log("******* UP-W train - %s, %d", newColor, newPosition);
 		}
-		// all trains at LED position 60 and above are UP-W, and are painted the UP-W color
+		// all trains at LED position 60 and above are MD-W, and are painted the MD-W color
 		else if (newPosition > 59) {
-			newColor = "green";
+			if (ledObject.direction == 'outbound') {
+				newColor = "green";
+			}
+			else if (ledObject.direction == 'inbound') {
+				newColor = "red";
+			}
+			else {
+				newColor = "White";
+				log.error('MD-W train color assignment - direction value not recognized - %s', ledObject.direction);
+			}
+console.log("******* MD-W train - %s, %d", newColor, newPosition);
 		}
 		// all other trains are UP-NW color
 		else {
-			newColor = "green";
+			if (ledObject.direction == 'outbound') {
+				newColor = "green";
+			}
+			else if (ledObject.direction == 'inbound') {
+				newColor = "red";
+			}
+			else {
+				newColor = "White";
+				log.error('UP-NW train color assignment - direction value not recognized - %s', ledObject.direction);
+			}
+console.log("******* UP-NW train - %s, %d", newColor, newPosition);
 		}
 		postBodyArray.push({position:newPosition, color:newColor});
 	});
@@ -674,9 +780,9 @@ function processFetchedData(sortedPositions, done) {
 		ledsToLight[name] = processFetchedLineData(name, sortedPositions[name]);
 	});
 	log.debug("%s", JSON.stringify(ledsToLight, null, 4));
-	// textDisplayUPNW(ledsToLight['UP-NW']);
-	// textDisplayMDW(ledsToLight['MD-W']);
-	// textDisplayUPW(ledsToLight['UP-W']);
+	textDisplayUPNW(ledsToLight['UP-NW']);
+	textDisplayMDW(ledsToLight['MD-W']);
+	textDisplayUPW(ledsToLight['UP-W']);
 	protoDisplayAll(ledsToLight);
 	done(null);
 }
@@ -724,7 +830,8 @@ function matchLedWithTrain(lineName, trainPosition) {
 			spur :       exactMatch.spurIndex,
 			segment :    exactMatch.segmentIndex,
 			segmentLed : exactMatch.ledIndex,
-			spurLed :    exactMatch.spurLed
+			spurLed :    exactMatch.spurLed,
+			direction :  trainPosition.direction
 		};
 	}
 	else {
