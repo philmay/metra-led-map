@@ -590,10 +590,31 @@ function protoDisplayAll(leds) {
 
 	// Squeeze the array in half for the protytype strips
 	var newPosition, newColor, newDirection;
+	var processedPositions = [];
 	ledLightArray.forEach((ledObject) => {
 		newPosition = Math.floor(ledObject.ledIndex/2);
+		processedPositions.push(newPosition);
+		// If there are two instances of this position, then two trains are passing
+		// each other and the LED should be yellow
+		if (_.indexOf(processedPositions, newPosition) != _.lastIndexOf(processedPositions, newPosition)) {
+			newColor = "yellow";
+			// If they are passing in a station, paint it white
+			if (newPosition == upnwOgilve ||
+			    newPosition == palatine ||
+			    newPosition == foxRiver ||
+			    newPosition == upwOgilve ||
+			    newPosition == collegeAve ||
+			    newPosition == westChicago ||
+			    newPosition == mdwOgilve ||
+			    newPosition == schaumburg ||
+			    newPosition == bartlet ||
+			    newPosition == bigTimber) 
+			{
+				 newColor = "white";
+			}
+		}
 		// ogilve and palatine get lit a mixed color if a train is present, as does fox river
-		if (newPosition == upnwOgilve || newPosition == palatine || newPosition == foxRiver) {
+		else if (newPosition == upnwOgilve || newPosition == palatine || newPosition == foxRiver) {
 			if (ledObject.direction == 'outbound') {
 				newColor = "SpringGreen";
 			}
@@ -601,7 +622,7 @@ function protoDisplayAll(leds) {
 				newColor = "SpringViolet";	// SpringViolet is not in bibliopixel palate, so I check for it directly in the python server
 			}
 			else {
-				newColor = "White";
+				newColor = "Orange";
 				log.error('UP-NW station color assignment - direction value not recognized - %s', ledObject.direction);
 			}
 		}
@@ -614,7 +635,7 @@ function protoDisplayAll(leds) {
 				newColor = "SpringViolet";	// SpringViolet is not in bibliopixel palate, so I check for it directly in the python server
 			}
 			else {
-				newColor = "White";
+				newColor = "Orange";
 				log.error('UP-w station color assignment - direction value not recognized - %s', ledObject.direction);
 			}
 		}
@@ -627,7 +648,7 @@ function protoDisplayAll(leds) {
 				newColor = "SpringViolet";	// SpringViolet is not in bibliopixel palate, so I check for it directly in the python server
 			}
 			else {
-				newColor = "White";
+				newColor = "Orange";
 				log.error('MD-W station color assignment - direction value not recognized - %s', ledObject.direction);
 			}
 		}
@@ -640,7 +661,7 @@ function protoDisplayAll(leds) {
 				newColor = "red";
 			}
 			else {
-				newColor = "White";
+				newColor = "Orange";
 				log.error('UP-W train color assignment - direction value not recognized - %s', ledObject.direction);
 			}
 		}
@@ -653,7 +674,7 @@ function protoDisplayAll(leds) {
 				newColor = "red";
 			}
 			else {
-				newColor = "White";
+				newColor = "Orange";
 				log.error('MD-W train color assignment - direction value not recognized - %s', ledObject.direction);
 			}
 		}
@@ -666,7 +687,7 @@ function protoDisplayAll(leds) {
 				newColor = "red";
 			}
 			else {
-				newColor = "White";
+				newColor = "Orange";
 				log.error('UP-NW train color assignment - direction value not recognized - %s', ledObject.direction);
 			}
 		}
