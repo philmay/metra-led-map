@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "dependencies": {
-    "async": "^2.4.1",
+    "async": "^3.2.2",
     "bunyan": "^1.8.10",
     "geolib": "^2.0.23",
     "latlon-geohash": "^1.1.0",
